@@ -1,6 +1,8 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchSingleUser, fetchUserData } from "../features/listUser/userSlice";
+import ModelComponent from "./modelComponent";
+import SearchComponent from "./searchComponent";
 
 export default function ListUser() {
   const dispatch = useDispatch();
@@ -12,10 +14,10 @@ export default function ListUser() {
   }, [dispatch]);
   const modalRef = useRef(null);
 
-  const openModal = () => {
+  const openModal = (login: any) => {
     if (modalRef.current) {
       modalRef.current.showModal();
-      dispatch(fetchSingleUser() as any);
+      dispatch(fetchSingleUser(login) as any);
     }
   };
 
@@ -26,11 +28,7 @@ export default function ListUser() {
   };
   return (
     <div>
-      <input
-        type="text"
-        placeholder="Type here"
-        className="input input-bordered w-full max-w-xs"
-      />
+      <SearchComponent />
       {!!userData &&
         userData.map((user: any) => {
           const { login } = user;
@@ -48,21 +46,13 @@ export default function ListUser() {
                 {" "}
                 <b>name-</b>
                 <p
-                  onClick={() => openModal()}
+                  onClick={() => openModal(login)}
                   className="hover:cursor-pointer  hover:bg-red-100 hover:rounded-lg"
                 >
                   {" "}
                   {user.login}
                 </p>
-                <dialog id="my_modal_2" ref={modalRef} className="modal">
-                  <div className="modal-box">
-                    <h3 className="font-bold text-lg">Hello!</h3>
-                    <p className="py-4">
-                      Press ESC key or click outside to close
-                    </p>
-                    <button onClick={closeModal}>Close</button>
-                  </div>
-                </dialog>
+                <ModelComponent modalRef={modalRef} closeModal={closeModal} />
               </div>{" "}
               <b> github-</b> <p>{user.url}</p>
             </div>

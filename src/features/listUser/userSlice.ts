@@ -17,6 +17,7 @@ export const fetchUserData = createAsyncThunk(
 export const fetchSingleUser = createAsyncThunk(
   "extraReducer/fetchSingleUser",
   async (login) => {
+    console.log("%csrc\featureslistUser.ts:20 login", "color: #007acc;", login);
     try {
       const response = await axios.get(`https://api.github.com/users/${login}`);
       return response.data;
@@ -25,13 +26,28 @@ export const fetchSingleUser = createAsyncThunk(
     }
   }
 );
+export const searchSingleUser = createAsyncThunk(
+  "extraReducer/searchSingleUser",
+  async (searchSingleuser) => {
+    console.log("searchSingleuser", searchSingleuser);
+    try {
+      const response = await axios.get(
+        `https://api.github.com/search/users?q=${searchSingleuser}`
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+
 const extraReducer = createSlice({
   name: "extraReducer",
   initialState: {
     userData: [],
     status: "idle",
     error: null,
-    singleuserData:[]
+    singleuserData: [],
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -56,6 +72,17 @@ const extraReducer = createSlice({
         state.error = null;
       })
       .addCase(fetchSingleUser.rejected, (state, action) => {
+        state.status = "failed";
+      })
+      .addCase(searchSingleUser.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(searchSingleUser.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.userData = action.payload;
+        state.error = null;
+      })
+      .addCase(searchSingleUser.rejected, (state, action) => {
         state.status = "failed";
       });
   },

@@ -42,7 +42,7 @@ export default function ListUser() {
                 alt=""
                 className="w-8 h-8 rounded-full"
               />
-              <div>
+              <div className="flex">
                 {" "}
                 <b>name-</b>
                 <p

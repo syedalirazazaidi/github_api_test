@@ -28,11 +28,11 @@ export const fetchSingleUser = createAsyncThunk(
 );
 export const searchSingleUser = createAsyncThunk(
   "extraReducer/searchSingleUser",
-  async (value) => {
-    console.log("searchSingleuser", value);
+  async (searchTerm) => {
+    console.log("searchSingleuser", searchTerm);
     try {
       const response = await axios.get(
-        `https://api.github.com/search/users?q=${value}`
+        `https://api.github.com/search/users?q=${searchTerm}`
       );
       return response.data;
     } catch (error) {
@@ -80,7 +80,7 @@ const extraReducer = createSlice({
       .addCase(searchSingleUser.fulfilled, (state, action) => {
         console.log("%cget search ", "color: #007acc;", action.payload);
         state.status = "succeeded";
-        state.userData = action.payload;
+        state.userData = action.payload.items;
         state.error = null;
       })
       .addCase(searchSingleUser.rejected, (state, action) => {

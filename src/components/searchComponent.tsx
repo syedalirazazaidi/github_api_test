@@ -1,19 +1,31 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useDispatch } from "react-redux";
-import { searchSingleUser } from "../features/listUser/userSlice";
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  fetchUserData,
+  searchSingleUser,
+} from "../features/listUser/userSlice";
 
 export default function SearchComponent() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
+  const userData = useSelector((state: any) => state.githubUser.userData);
+
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(searchSingleUser(searchTerm) as any);
-  }, [searchTerm]);
   const handleChange = (event: any) => {
     const { value } = event.target;
     setSearchTerm(value);
   };
+  useEffect(() => {
+    const searchTimer = setTimeout(() => {
+      if (searchTerm.trim() !== "") {
+        dispatch(searchSingleUser(searchTerm) as any);
+      } else {
+        dispatch(fetchUserData() as any);
+      }
+    }, 1000);
+
+    return () => clearTimeout(searchTimer);
+  }, [searchTerm, dispatch]);
   return (
     <div>
       <input
